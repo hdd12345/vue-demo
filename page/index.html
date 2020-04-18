@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-compatible" content="ie=edge">
+    <title>Vue Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .active{
+            border: 3px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div id="div1">
+        <h2>Hello Vue!</h2>
+        <span>{{hello}}</span>
+    </div>
+    <hr>
+    <div id="div2">
+        <h2>v-on指令</h2>
+        <button v-on:click="fun1(message)">点击事件</button>
+        <!-- <button v-on:mouseenter="fun1('鼠标移入事件')">鼠标移入事件</button>
+        <button v-on:mouseleave="fun1('鼠标移出事件')">鼠标移出事件</button> -->
+        <!-- v-on可以简写为@ -->
+        <button @dblclick="fun1('双击事件')">双击事件</button>
+        <input @keyup.enter="fun1('回车事件')" value="回车事件">
+    </div>
+    <hr>
+    <div id="div3">
+        <h2>v-text指令和v-html指令</h2>
+        <span v-text="msg+'aa'"></span><br>
+        <span v-html="msg+'aa'"></span><br>
+        <span>{{msg}}aa</span><br>
+    </div>
+    <hr>
+    <div id="div4">
+        <h2>v-show指令</h2>
+        <button @click="showAndHide">显示/隐藏</button>
+        <!--根据真假（true/false）切换元素的显示状态，原理是修改元素的display。数据改变之后，对应的元素显示状态会同步更新-->
+        <span v-show="isShow">我显示了！！！</span>
+        <button @click="showAndHide2">显示/隐藏</button>
+        <!--通过v-if指令改变元素显示/隐藏的原理从dom树中添加或移除元素，切换消耗比v-show指令大-->
+        <span v-if="age>=18">我有出息了！！！</span>
+    </div>
+    <hr>
+    <div id="div5">
+        <h2>v-bind指令</h2>
+        <!--v-bind指令用来设置元素属性，可简写为:-->
+        <img :src="image.imageUrl" :title="image.imageTitle" :class="{active:image.hasBorder}" @click="borderFun" style="width: 160px;height: 90px;">
+    </div>
+    <hr>
+    <div id="div6">
+        <h2>v-for指令</h2>
+        <div>
+            <ul v-for="(item,index) in list">
+                <li v-text="item.content+index" :style="item.style"></li>
+            </ul>
+        </div>
+    </div>
+    <hr>
+    <div id="div7">
+        <h2>v-model指令</h2>
+        <!--v-model指令的作用是设置和获取表单元素的值。绑定的data数据和表单元素的值相关联，改变其中一个，另外一个也会自动改变-->
+        <input type="text" v-model="message">
+        <span style="color: red;">{{message}}</span>
+    </div>
+
+    <script>
+        var app = new Vue({
+            /*el挂载点，vue会管理el选项命中的元素及其内部的后代元素
+             *适用于所有css选择器（body和html两个标签除外）
+             */
+            el:"#div1",
+            data:{
+                hello:"Hello VUE!!!"
+            }
+        });
+
+        var app2 = new Vue({
+            el:"#div2",
+            data:{
+                message:"哈哈哈！！！"
+            },
+            methods:{
+                fun1:function (param){
+                    alert(param);
+                }
+            }
+        });
+
+        var app3 = new Vue({
+            el:"#div3",
+            data:{
+                msg:"<span style='color:red'>哈哈哈</span>"
+            }
+        });
+
+        var app4 = new Vue({
+            el:"#div4",
+            data:{
+                isShow:true,
+                age:18
+            },
+            methods:{
+                showAndHide:function (){
+                    this.isShow = !this.isShow;
+                },
+                showAndHide2:function (){
+                    if(this.age>=18){
+                        this.age = 17;
+                    }else{
+                        this.age = 18;
+                    }
+                }
+            }
+        });
+
+        var app5 = new Vue({
+            el:"#div5",
+            data:{
+                image:{
+                    imageUrl:"../image/watergirl.jpg",
+                    imageTitle:"这是一张好看的图片",
+                    hasBorder:false
+                }
+            },
+            methods:{
+                borderFun:function (){
+                    this.image.hasBorder = !this.image.hasBorder;
+                }
+            }
+        });
+
+        var app6 = new Vue({
+            el:"#div6",
+            data:{
+                list:[{
+                    content:"哈哈哈",
+                    style:"color:red",
+                },{
+                    content:"哈哈哈",
+                    style:"color:green",
+                },{
+                    content:"哈哈哈",
+                    style:"color:blue",
+                },{
+                    content:"哈哈哈",
+                    style:"color:orange",
+                },{
+                    content:"哈哈哈",
+                    style:"color:gray",
+                }]
+            }
+        });
+
+        var app7 = new Vue({
+            el:"#div7",
+            data:{
+                message:"我想吃西瓜！！！"
+            }
+        });
+
+    </script>
+</body>
+</html>
