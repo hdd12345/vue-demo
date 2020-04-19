@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>axios and vue demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <h2>axios get request 随机笑话</h2>
+        <div>
+            <span>获取条数：</span>
+            <input v-model="num" @keyup.enter="queryJoke">
+            <input type="button" @click="queryJoke" value="查询">
+        </div>
+        <ul v-for="(item, index) in jokeList">
+            <li v-text="item"></li>
+        </ul>
+        <h2>axios post 测试接口</h2>
+        <div>
+            <input v-model="registerName" @keyup.enter="registerFun">
+            <input type="button" @click="registerFun" value="DoPost">
+        </div>
+    </div>
+    <hr>
+    <div id="div2">
+        <h2>天气查询</h2>
+        <input type="text" @keyup.enter="queryCityFun()" v-model="city">
+        <button @click="queryCityFun()">查询</button><br>
+        <a href="#" @click="queryCityFun('北京')">北京</a>
+        <a href="#" @click="queryCityFun('上海')">上海</a>
+        <a href="#" @click="queryCityFun('广州')">广州</a>
+        <a href="#" @click="queryCityFun('深圳')">深圳</a><br>
+        --------------------------------------------------------------------------------------<br>
+        <ul v-for="(item, index) in weatherList">
+            <li>
+                <span v-text="item.date"></span>&nbsp;
+                <span v-text="item.type"></span>&nbsp;
+                <span v-text="item.low"></span>
+                <span v-text="item.high"></span>&nbsp;
+                <span v-text="item.fengxiang"></span>
+                <span v-text="item.fengli"></span>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        var app1 = new Vue({
+            el:"#div1",
+            data:{
+                jokeList:[],
+                num:0,
+                registerName:""
+            },
+            methods: {
+                queryJoke:function (){
+                    var that = this;
+                    axios.get("https://autumnfish.cn/api/joke/list?num="+this.num)
+                    .then(function(response){
+                        that.jokeList = response.data.jokes;
+                    })
+                    .catch(function(err){console.log(err)});
+                },
+                registerFun:function (){
+                    axios.post("https://autumnfish.cn/api/user/reg",{username:this.registerName})
+                    .then(res => {
+                        console.log(res);
+                    })
+                    .catch(err => {
+                        console.error(err); 
+                    });
+                }
+            },
+        });
+
+        var app2 = new Vue({
+            el:"#div2",
+            data:{
+                weatherList:[],
+                city:"广州"
+            },
+            methods:{
+                queryCityFun:function (city){
+                    var that = this;
+                    if(city == null || city == ""){
+                        city = this.city;
+                    }
+                    axios.get("http://wthrcdn.etouch.cn/weather_mini?city="+city)
+                    .then(res => {
+                        that.weatherList = res.data.data.forecast;
+                    })
+                    .catch(err => {
+                        console.error(err); 
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+</html>
