@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>侦听器和过滤器Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <h2>侦听器测试</h2>
+        <span>First Name</span>
+        <input type="text" v-model="firstName"><br>
+        <span>Last Name</span>
+        <input type="text" v-model="lastName"><br>
+        <span>{{fullName}}</span><br>
+        --------------------------------------------------------------------------------
+        <div>
+            <input type="text" v-model.lazy="username">
+            <span v-html="tip"></span>
+        </div>
+    </div>
+    <hr>
+    <div id="div2">
+        <h2>过滤器测试</h2>
+        <input type="text" v-model="word">
+        <div>{{word | upper}}</div>
+        <div>{{word | upper | lower}}</div>
+        <div>{{date | formatDate("hhhhhhh")}}</div>
+    </div>
+
+    <script>
+        var app1 = new Vue({
+            el:"#div1",
+            data:{
+                firstName:"Olaf",
+                lastName:"Huang",
+                fullName:"Olaf Huang",
+                username:"",
+                tip:""
+            },
+            /*侦听器：监听数据的变化触发对应的方法*/
+            watch: {
+                firstName:function(val){
+                    this.fullName = val + " " + this.lastName;
+                },
+                lastName:function(val){
+                    this.fullName = this.firstName + " " +val;
+                },
+                username:function(val){
+                    this.checkUsername(val);
+                    this.tip = "正在校验..."
+                }
+            },
+            computed: {//第三方属性
+                // fullName:function(){
+                //     return this.firstName + " " + this.lastName;
+                // }
+            },
+            methods: {
+                checkUsername:function(username){
+                    var that = this;
+                    //模拟检验用户名是否存在的接口调用
+                    setTimeout(function(){
+                        if("admin" == username){
+                            that.tip = "<span style='color:red;'>用户名已存在，请重新输入</span>";
+                        }else{
+                            that.tip = "<span style='color:green;'>用户名可以使用</span>";
+                        }
+                    },2000);
+                }
+            },
+        });
+
+        /*过滤器，一般用于转换数据格式*/
+        Vue.filter("upper",function(value){
+            return value.toUpperCase();
+        });
+        Vue.filter("lower",function(value){
+            return value.toLowerCase();
+        });
+        var app2 = new Vue({
+            el:"#div2",
+            data:{
+                word:"",
+                date:new Date()
+            },
+            /*局部过滤器：挂载点指定的范围内有效*/
+            filters:{
+                formatDate:function(value,param1){
+                    console.log(param1);
+                    return value.getFullYear() + "-" + value.getMonth() + "-" + value.getDate();
+                }
+            }
+        })
+
+    </script>
+</body>
+</html>
