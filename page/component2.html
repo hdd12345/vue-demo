@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>子组件向父组件传值</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="div1">
+    <div :style="{fontSize: fontSize + 'px'}">{{pmsg}}</div>
+    <!--父组件监听子组件事件，$event为子组件传来的参数-->    
+    <my-component @enlarge-text="handle($event)"></my-component>
+    </div>
+
+    <script>
+        Vue.component('my-component',{
+            data:function(){
+                return {
+                    name:"myname",
+                    msg:"child msg"
+                }
+            },
+            /*子组件自定义事件*/
+            template:'<button @click="$emit(\'enlarge-text\',5)">扩大字体</button>',
+        })
+        var app = new Vue({
+            el:"#div1",
+            data:{
+                pmsg:"父组件内容",
+                fontSize:10
+            },
+            methods: {
+                handle:function(value){
+                    this.fontSize += value;
+                }
+            },
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>兄弟组件传值</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <test-tom></test-tom>
+        <hr>
+        <test-jerry></test-jerry>
+        <hr>
+        <button @click="destroyEvent">销毁事件</button>
+    </div>
+
+    <script>
+        /* 事件中心：用于管理组件间的通信 */
+        var eventHub = new Vue();
+        
+        Vue.component("test-tom",{
+            data:function(){
+                return {
+                    num:0
+                }
+            },
+            template:`
+                <div>
+                    <h2>子组件Tom</h2>
+                    <div>TOM:{{num}}</div>
+                    <div>
+                        <button @click="handle(1)">点击Jerry+1</button>
+                    </div>
+                </div>
+            `,
+            methods: {
+                handle:function(val){
+                    eventHub.$emit('jerry-event', val);
+                }
+            },
+            mounted:function() {
+                //创建监听事件
+                eventHub.$on("tom-event", (val) => {
+                    this.num += val;
+                });
+            }
+        });
+
+        Vue.component("test-jerry",{
+            data:function(){
+                return {
+                    num:0
+                }
+            },
+            template:`
+                <div>
+                    <h2>子组件Jerry</h2>
+                    <div>JERRY:{{num}}</div>
+                    <div>
+                        <button @click="handle(2)">点击Tom+2</button>
+                    </div>
+                </div>
+            `,
+            methods: {
+                handle:function(val){
+                    //通过事件中心触发兄弟组件的事件
+                    eventHub.$emit('tom-event', val);
+                }
+            },
+            mounted:function() {
+                //创建监听事件
+                eventHub.$on("jerry-event", (val) => {
+                    this.num += val;
+                });
+            }
+        });
+
+        /* 父组件须定义在子组件下面，否则会报错 */
+        var app = new Vue({
+            el:"#div1",
+            data:{
+
+            },
+            methods:{
+                destroyEvent:function(){
+                    //销毁事件中心的事件
+                    eventHub.$off("tom-event");
+                    eventHub.$off("jerry-event");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

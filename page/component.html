@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>父组件向子组件传值</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!--通过bind指令向子组件属性传值-->
+        <my-button :title="pmsg" :arr="parentArr"></my-button>
+    </div>
+    
+
+    <script>
+        
+        Vue.component("my-button",{
+            props:['title','arr'],
+            data:function(){
+                return {
+                    msg:"子组件数据"
+                }
+            },
+            //此处的title和arr为子组件的属性
+            template:`<div>
+                        <div>
+                            <button @click="btnLis" value="">{{msg+title}}</button>
+                        </div>
+                        <div>
+                            <ul v-for="(item,index) in arr">
+                                <li v-text="item.name"></li>
+                            </ul>
+                        </div>
+                    </div>`,
+            methods: {
+                btnLis:function(){
+                    alert("test component");
+                }
+            }
+        })
+        var app = new Vue({
+            el:"#app",
+            data:{
+                pmsg:"btn",
+                parentArr:[{name:"apple"},{name:"lemon"},{name:"orange"}]
+            },
+            //局部组件只能在注册它的父组件中使用
+            // components:{
+            
+            // }
+        })
+    </script>
+</body>
+</html>

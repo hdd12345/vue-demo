@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>组件插槽</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <child-component>插槽内容1</child-component>
+        <child-component>插槽内容2</child-component>
+        <child-component></child-component>
+        <hr>
+        <child-component>
+            <div slot="hahaha">具名插槽内容1</div>
+        </child-component>
+        <hr>
+        <h2>作用域插槽</h2>
+        <child-component2 :fruits="fruitsArr">
+            <template slot-scope="slotProps">
+                <span v-if="slotProps.info.id == 2" style="color:aqua">{{slotProps.info.name}}</span>
+                <span v-else>{{slotProps.info.name}}</span>
+            </template>
+        </child-component2>
+    </div>
+
+    <script>
+
+        Vue.component("child-component",{
+            data:function(){
+                return {
+                    num:0
+                }
+            },
+            template:`<div><slot>默认内容</slot><div style="color:red"><slot name="hahaha">具名默认内容</slot></div></div>`
+        });
+
+        Vue.component("child-component2", {
+            props: ['fruits','aaa'],
+            data:function(){
+                return {
+
+                }
+            },
+            template:`
+                <div>
+                    <ul v-for="(item,index) in fruits" :key="item.id">
+                        <li>
+                            <slot :info="item"></slot>
+                        </li>
+                    </ul>
+                </div>
+            `
+        });
+
+        var app = new Vue({
+            el:"#div1",
+            data:{
+                fruitsArr:[{
+                    id:1,
+                    name:'apple'
+                },{
+                    id:2,
+                    name:'banana'
+                },{
+                    id:3,
+                    name:'orange'
+                }]
+            }
+        })
+    </script>
+</body>
+</html>
