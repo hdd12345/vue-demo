@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>编程式导航</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <router-link :to="{ name: 'user', params: { id: 123 }}">User</router-link>
+        <router-link :to="{ name: 'register'}">Register</router-link>
+        <!--路由占位符-->
+        <router-view></router-view>
+    </div>
+
+    <script>
+        
+        const user = {
+            props: ["id","uname","age"],//使用props接收路由参数
+            template: `
+                <div>
+                    <h1>user 组件 -- 用户id为：{{id}} -- 用户名：{{uname}} -- 年龄：{{age}}</h1>
+                    <button @click="goRegister">跳转到注册页面</button>
+                </div>
+            `,
+            methods: {
+                goRegister: function(){
+                    this.$router.push("/register");
+                    /*
+                        带参数：this.$router.push({ path: "/register", params: { uname: "name_test"}});
+                        带查询参数：this.$router.push({ path: "/register", query: { uname: "name_test"}});
+                    */
+                }
+            },
+        }
+
+        const register = {
+            template: `
+                <div>
+                    <h1>register 组件</h1>
+                    <!-- 子路由链接 -->
+                    <router-link to="/register/tab1">tab1</router-link>
+                    <router-link to="/register/tab2">tab2</router-link>
+                    <!--路由占位符-->
+                    <router-view></router-view>
+                    <button @click="goBack">后退</button>
+                </div>
+            `,
+            methods: {
+                goBack: function(){
+                    this.$router.go(-1);
+                }
+            },
+        }
+
+        const tab1 = {
+            template: `<h1>tab1 组件</h1>`
+        }
+
+        const tab2 = {
+            template: `<h1>tab2 组件</h1>`
+        }
+
+        //路由实例对象
+        const router = new VueRouter({
+            //路由规则
+            routes:[
+                {path: "/", redirect: "/user/123"},
+                //如果props是一个函数，这个函数接收route对象作为形参
+                {name: "user", path: "/user/:id", component: user, props: route => ({ uname: "zhangsan", age: "28", id: route.params.id})},
+                {name: "register", path: "/register", component: register, children: [
+                    {path: "/register/tab1", component: tab1},
+                    {path: "/register/tab2", component: tab2}
+                ]}
+            ]
+        });
+
+        const app = new Vue({ 
+            el:"#div1",
+            data:{},
+            router
+        });
+    </script>
+</body>
+</html>
