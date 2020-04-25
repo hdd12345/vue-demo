@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>动态路由匹配</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <router-link to="/user/123">User</router-link>
+        <router-link to="/register">Register</router-link>
+        <!--路由占位符-->
+        <router-view></router-view>
+    </div>
+
+    <script>
+        
+        const user = {
+            props: ["id","uname","age"],//使用props接收路由参数
+            template: `<h1>user 组件 -- 用户id为：{{id}} -- 用户名：{{uname}} -- 年龄：{{age}}</h1>`
+        }
+
+        const register = {
+            template: `
+                <div>
+                    <h1>register 组件</h1>
+                    <!-- 子路由链接 -->
+                    <router-link to="/register/tab1">tab1</router-link>
+                    <router-link to="/register/tab2">tab2</router-link>
+                    <!--路由占位符-->
+                    <router-view></router-view>
+                </div>
+            `
+        }
+
+        const tab1 = {
+            template: `<h1>tab1 组件</h1>`
+        }
+
+        const tab2 = {
+            template: `<h1>tab2 组件</h1>`
+        }
+
+        //路由实例对象
+        const router = new VueRouter({
+            //路由规则
+            routes:[
+                {path: "/", redirect: "/user/456"},
+                //如果props是一个对象，它会被按照原样设置为组件属性
+                {path: "/user/:id", component: user, props: { uname: "zhangsan", age: "28"}},
+                {path: "/register", component: register, children: [
+                    {path: "/register/tab1", component: tab1},
+                    {path: "/register/tab2", component: tab2}
+                ]}
+            ]
+        });
+
+        const app = new Vue({ 
+            el:"#div1",
+            data:{},
+            router
+        });
+    </script>
+</body>
+</html>

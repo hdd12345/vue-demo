@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>模拟路由</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="div1">
+        <a href="#/zhuye">主页</a>
+        <a href="#/keji">科技</a>
+        <a href="#/caijing">财经</a>
+        <a href="#/yule">娱乐</a>
+
+        <!--把component标签当作组件占位符，:is属性指定组件名称，把对应的组件渲染到component标签所在位置-->
+        <component :is="comName"></component>
+    </div>
+
+    <script>
+        const zhuye = {
+            template:`<h1>主页</h1>`
+        };
+        const keji = {
+            template:`<h1>科技</h1>`
+        };
+        const caijing = {
+            template:`<h1>财经</h1>`
+        };
+        const yule = {
+            template:`<h1>娱乐</h1>`
+        };
+
+        var app = new Vue({
+            el:"#div1",
+            data:{comName:"zhuye"},
+            components:{
+                zhuye,
+                keji,
+                caijing,
+                yule
+            }
+        });
+
+    
+        //监听window的onhashchange事件，根据获取到的最新的hash值，切换要显示的组件名称
+        window.onhashchange = function(){
+            //通过location.hash获取到最新的hash值
+            console.log(location.hash);
+            switch(location.hash.slice(1)){
+                case "/zhuye":
+                    app.comName = "zhuye";
+                    break;
+                case "/keji":
+                    app.comName = "keji";
+                    break;
+                case "/caijing":
+                    app.comName = "caijing";
+                    break;
+                case "/yule":
+                    app.comName = "yule";
+                    break;
+                default:
+                    app.comName = "zhuye";
+            }
+        }
+    </script>
+</body>
+</html>
